@@ -1,0 +1,1 @@
+<h1>this is page for all posts</h1>
