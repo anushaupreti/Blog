@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Yajra\Datatables\Datatables;
 
 class PostController extends Controller
 {
@@ -12,10 +16,22 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $post = Post::all();
-        return view('home', compact('posts'));
+        $posts = Post::get();
+        if ($request->ajax()) {
+            $allData = Datatables::of($posts)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href = "javascript:void(0)" data-toggle="tooltip" data-id ="' . $row->id . '" data-original-title = "Edit" class="edit btn btn-primary btn-sm editPost">Edit</a> &nbsp';
+                    $btn .= '<a href = "javascript:void(0)" data-toggle="tooltip" data-id ="' . $row->id . '" data-original-title = "Delete" class="edit btn btn-danger btn-sm deletePost"> Delete</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+            return $allData;
+        }
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -25,6 +41,7 @@ class PostController extends Controller
      */
     public function create()
     {
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -39,17 +56,17 @@ class PostController extends Controller
             'title' => ['required'],
             'description' => ['required']
         ]);
-        try {
-            Post::create([
+
+        Post::updateOrCreate([
+            ['id' => $request->id],
+            [
                 'title' => $request->title,
                 'description' => $request->description
-            ]);
-        } catch (\Exception $exception) {
-            toastr()->error('Error while adding Post');
-            return redirect()->back();
-        }
-        toastr()->success('Hotel Added Successfully!!');
-        return redirect()->route('hotel.index');
+            ],
+        ]);
+
+        return response()->json(['success' => 'Post added successfully']);
+        return redirect()->route('Posts.index');
     }
 
     /**
@@ -70,8 +87,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::findorfail($id);
-        return view('home');
+        $posts = Post::findorfail($id);
+        return view('posts');
     }
 
     /**
@@ -81,10 +98,7 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
-    {
-        //
-    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -92,8 +106,19 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $posts = Post::findorfail($id);
+            $posts->delete();
+        } catch (\Exception $exception) {
+            DB::rollback();
+            // toastr()->error('Error While Deleting Post');
+            return redirect()->back();
+        }
+        DB::rollback();
+        // toastr()->success('Post is deleted successfully');
+        return redirect()->back();
     }
 }

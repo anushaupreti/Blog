@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="alert alert-dismissible alert-success">
+<!-- <div class="alert alert-dismissible alert-success">
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     <strong>Well done!</strong> You've successfully added your post.
-</div>
+</div> -->
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary ms-5 m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
     Add Post
@@ -19,7 +19,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/post/store">
+                <form id="createpost" action="javascript:void(0)">
+                    @csrf
                     <!-- Name input -->
                     <div class="form-outline mb-4">
                         <input type="text" id="title" class="form-control" name="title" />
@@ -38,7 +39,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Add Post</button>
+                <button type="submit" id="btnsubmit" class="btn btn-primary">Add Post</button>
             </div>
         </div>
     </div>
@@ -62,24 +63,43 @@
     </div>
 </div> -->
 
-<!-- <button class="btn btn-primary ms-5 m-2 p-2">Add Post</button> -->
-<div class="container bg-secondary">
-    <div class="row justify-content-center">
-        <div class="col-md-3 p-2">
-            <div class="card" style="width: 18rem;">
-                <img src="" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-                <div class="card-body">
-                    <a href="#" class="card-link btn btn-primary">Read All</a>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container">
+    <h1>Post List</h1>
+    <table class="table table-bordered data-table">
+        <thead>
+            <tr>
+                <th>S.N.</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 </div>
-
-<!-- modal popup for adding posts -->
+<script type="text/javascript">
+    var table = $(".data-table").DataTable({
+        serverSide: true,
+        processing: true,
+        ajax: "{{route('posts.index')}}",
+        columns: [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex'
+            },
+            {
+                data: 'title',
+                name: 'title'
+            },
+            {
+                data: 'description',
+                name: 'description'
+            },
+            {
+                data: 'action',
+                name: 'action'
+            },
+        ]
+    });
+</script>
 
 @endsection
