@@ -1,17 +1,18 @@
 @extends('layouts.app')
 
-@section('content')
+@section('content' )
+
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add New Post</h5>
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="createpost" action="javascript:void(0)">
-          @csrf
+          {!! csrf_field() !!}
           <input type="hidden" name="id" id="post_id">
           <!-- Name input -->
           <div class="form-outline mb-4">
@@ -33,25 +34,6 @@
     </div>
   </div>
 </div>
-<!-- <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
-                    </div>
-                    @endif
-                    {{ __('You are logged in! WELCOME to your Dashboard') }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <div class="container">
   <h1>Post List</h1>
   <!-- Button trigger modal -->
@@ -102,6 +84,7 @@
       ]
     });
     $("#addnewpost").click(function() {
+      $("#exampleModalLabel").html("Add New Post");
       $("#post_id").val('');
       $("#createpost").trigger("reset");
       $("#exampleModal").modal('show');
@@ -123,6 +106,30 @@
           console.log('Error:', data);
           $("#btnSubmit").html('Save');
         }
+      });
+    });
+    $('body').on('click', '.deletePost', function() {
+      var post_id = $(this).data("id");
+      confirm("Are you sure want to delete??");
+      $.ajax({
+        type: "DELETE",
+        url: "{{route('posts.store')}}" + '/' + student_id,
+        success: function(data) {
+          table.draw();
+        },
+        error: function(data) {
+          console.log('Error:', data);
+        }
+      });
+    });
+    $('body').on('click', '.editPost', function() {
+      var post_id = $(this).data('id');
+      $.get("{{route('posts.index')}}" + "/" + post_id + "/edit", function(data) {
+        $("#exampleModalLabel").html("Edit Post");
+        $('#exampleModal').modal('show');
+        $("#post_id").val(data.id);
+        $("#title").val(data.title);
+        $("#description").val(data.description);
       });
     });
   });

@@ -64,7 +64,6 @@ class PostController extends Controller
                 'description' => $request->description
             ],
         ]);
-
         return response()->json(['success' => 'Post added successfully']);
         return redirect()->route('Posts.index');
     }
@@ -88,7 +87,7 @@ class PostController extends Controller
     public function edit($id)
     {
         $posts = Post::findorfail($id);
-        return view('posts');
+        return response()->json($posts);
     }
 
     /**
@@ -108,17 +107,7 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        DB::beginTransaction();
-        try {
-            $posts = Post::findorfail($id);
-            $posts->delete();
-        } catch (\Exception $exception) {
-            DB::rollback();
-            // toastr()->error('Error While Deleting Post');
-            return redirect()->back();
-        }
-        DB::rollback();
-        // toastr()->success('Post is deleted successfully');
-        return redirect()->back();
+        Post::find($id)->delete();
+        return response()->json(['success' => 'Post Deleted Successfully']);
     }
 }
