@@ -16,14 +16,14 @@
           <input type="hidden" name="id" id="post_id">
           <!-- Name input -->
           <div class="form-outline mb-4">
-            <input type="text" id="title" class="form-control" name="title" />
-            <label class="form-label" for="form4Example1">Title</label>
+            <input type="text" id="title" class="form-control" name="title" placeholder="Enter Title..." required />
+            <label class="form-label" for="title">Title</label>
           </div>
 
           <!-- Message input -->
           <div class="form-outline mb-4">
-            <textarea class="form-control" id="form4Example3" rows="4" name="description" id="description"></textarea>
-            <label class="form-label" for="form4Example3">Description</label>
+            <textarea class="form-control" id="description" rows="4" name="description" placeholder="Enter description..." required></textarea>
+            <label class="form-label" for="description">Description</label>
           </div>
         </form>
       </div>
@@ -83,6 +83,10 @@
         },
       ]
     });
+  });
+</script>
+<script type="text/javascript">
+  $(function() {
     $("#addnewpost").click(function() {
       $("#exampleModalLabel").html("Add New Post");
       $("#post_id").val('');
@@ -91,15 +95,15 @@
     });
     $("#btnSubmit").click(function(e) {
       e.preventDefault();
-      $(this).html('Save');
+      // $(this).html('Save');
       $.ajax({
         data: $("#createpost").serialize(),
         url: "{{route('posts.store')}}",
         type: "POST",
-        dataType: 'json',
+        dataType: "json",
         success: function(data) {
-          $('#createpost').trigger("reset");
-          $('#exampleModal').modal('hide');
+          $("#createpost").trigger("reset");
+          $("#exampleModal").modal('hide');
           table.draw();
         },
         error: function(data) {
@@ -113,7 +117,7 @@
       confirm("Are you sure want to delete??");
       $.ajax({
         type: "DELETE",
-        url: "{{route('posts.store')}}" + '/' + student_id,
+        url: "{{route('posts.store')}}" + '/' + post_id,
         success: function(data) {
           table.draw();
         },
@@ -134,5 +138,6 @@
     });
   });
 </script>
+
 
 @endsection

@@ -23,8 +23,8 @@ class PostController extends Controller
             $allData = Datatables::of($posts)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href = "javascript:void(0)" data-toggle="tooltip" data-id ="' . $row->id . '" data-original-title = "Edit" class="edit btn btn-primary btn-sm editPost">Edit</a> &nbsp';
-                    $btn .= '<a href = "javascript:void(0)" data-toggle="tooltip" data-id ="' . $row->id . '" data-original-title = "Delete" class="edit btn btn-danger btn-sm deletePost"> Delete</a>';
+                    $btn = '<a href = "javascript:void(0)" data-toggle = "tooltip" data-id="' . $row->id . '" data-original-title ="Edit" class="edit btn btn-primary btn-sm editPost" >Edit</a> &nbsp';
+                    $btn .= '<a href = "javascript:void(0)" data-toggle = "tooltip" data-id="' . $row->id . '" data-original-title ="Delete" class="delete btn btn-danger btn-sm deletePost" >Delete</a>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -53,17 +53,18 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => ['required'],
-            'description' => ['required']
+            'title' => 'required',
+            'description' => 'required'
         ]);
 
-        Post::updateOrCreate([
+        Post::updateOrCreate(
             ['id' => $request->id],
             [
                 'title' => $request->title,
                 'description' => $request->description
-            ],
-        ]);
+            ]
+        );
+        // dd(request()->all());
         return response()->json(['success' => 'Post added successfully']);
         return redirect()->route('Posts.index');
     }
