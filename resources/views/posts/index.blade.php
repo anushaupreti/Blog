@@ -93,6 +93,12 @@
       $("#createpost").trigger("reset");
       $("#exampleModal").modal('show');
     });
+    $("#createpost").submit(function() {
+      var formData = {
+        title: $("#title").val(),
+        description: $("#description").val()
+      };
+    });
     $("#btnSubmit").click(function(e) {
       e.preventDefault();
       // $(this).html('Save');
@@ -102,6 +108,7 @@
         type: "POST",
         dataType: "json",
         success: function(data) {
+          console.log(data);
           $("#createpost").trigger("reset");
           $("#exampleModal").modal('hide');
           table.draw();
