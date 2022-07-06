@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content' )
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -12,8 +11,7 @@
       </div>
       <div class="modal-body">
         <form id="createpost" action="javascript:void(0)">
-          {!! csrf_field() !!}
-          <input type="hidden" name="id" id="post_id">
+          <input type="hidden" name="post_id" id="post_id">
           <!-- Name input -->
           <div class="form-outline mb-4">
             <input type="text" id="title" class="form-control" name="title" placeholder="Enter Title..." required />
@@ -37,7 +35,7 @@
 <div class="container">
   <h1>Post List</h1>
   <!-- Button trigger modal -->
-  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float:right;" id="addnewpost">
+  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float:right;" id="addnewpost" href="javascript:void(0)">
     Add Post
   </button><br><br>
   <table class="table table-bordered data-table">
@@ -93,25 +91,26 @@
       $("#createpost").trigger("reset");
       $("#exampleModal").modal('show');
     });
-    $("#btnSubmit").click(function(e) {
+
+    $('#btnSubmit').click(function(e) {
       e.preventDefault();
-      // $(this).html('Save');
       $.ajax({
-        data: $("#createpost").serialize(),
-        url: "{{route('posts.store')}}",
+        data: $('#createpost').serialize(),
+        url: "{{url('posts')}}",
         type: "POST",
-        dataType: "json",
+        dataType: 'json',
         success: function(data) {
           $("#createpost").trigger("reset");
-          $("#exampleModal").modal('hide');
+          $('#exampleModal').modal('hide');
           table.draw();
         },
         error: function(data) {
-          console.log('Error:', data);
-          $("#btnSubmit").html('Save');
+          console.log(data);
+          $("#btnSubmit").html('save');
         }
       });
     });
+
     $('body').on('click', '.deletePost', function() {
       var post_id = $(this).data("id");
       confirm("Are you sure want to delete??");
@@ -121,7 +120,7 @@
         success: function(data) {
           table.draw();
         },
-        error: function(data) {
+        error: function(xhr) {
           console.log('Error:', data);
         }
       });
