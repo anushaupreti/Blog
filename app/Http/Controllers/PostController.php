@@ -20,11 +20,11 @@ class PostController extends Controller
     {
         $posts = Post::get();
         if ($request->ajax()) {
-            $allData = Datatables::of($posts)
+            $allData = DataTables::of($posts)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href = "javascript:void(0)" data-toggle = "tooltip" data-id="' . $row->id . '" data-original-title ="Edit" class="edit btn btn-primary btn-sm editPost" >Edit</a> &nbsp';
-                    $btn .= '<a href = "javascript:void(0)" data-toggle = "tooltip" data-id="' . $row->id . '" data-original-title ="Delete" class="delete btn btn-danger btn-sm deletePost" >Delete</a>';
+                    $btn = '<a href = "javascript:void(0)" data-toggle = "tooltip" data-id="' . $row->id . '" data-original-title ="Edit" class="edit btn btn-primary btn-sm editPost">Edit</a> &nbsp';
+                    $btn .= '<a href = "javascript:void(0)" data-toggle = "tooltip" data-id="' . $row->id . '" data-original-title ="Delete" class="delete btn btn-danger btn-sm deletePost">Delete</a>';
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -41,7 +41,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.index', compact('posts'));
+        // return view('posts.index', compact('posts'));
     }
 
     /**
@@ -52,17 +52,15 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-
         Post::updateOrCreate(
-            ['id' => $request->id],
+            ['id' => $request->post_id],
             [
                 'title' => $request->title,
                 'description' => $request->description
             ]
         );
-        // dd(request()->all());
         return response()->json(['success' => 'Post added successfully']);
-        return redirect()->route('Posts.index');
+        // return redirect()->route('Posts.index');
     }
 
     /**
